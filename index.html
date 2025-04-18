@@ -1,261 +1,66 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <title>21点游戏</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #2c7523;
-            color: white;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .game-container {
-            background: #116530;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.5);
-            margin: 20px;
-        }
-
-        .cards {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin: 20px 0;
-            min-height: 120px;
-        }
-
-        .card {
-            width: 80px;
-            height: 120px;
-            background: white;
-            border-radius: 8px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 1.2em;
-            color: black;
-            position: relative;
-            transition: transform 0.3s;
-        }
-
-        .card::before {
-            content: attr(data-suit);
-            position: absolute;
-            top: 5px;
-            left: 5px;
-            font-size: 1.5em;
-        }
-
-        .red { color: red; }
-        .black { color: black; }
-
-        .controls {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-        }
-
-        button {
-            padding: 10px 20px;
-            font-size: 1.1em;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        button:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 10px white;
-        }
-
-        #message {
-            font-size: 1.2em;
-            margin-top: 20px;
-            min-height: 30px;
-        }
-
-        .score {
-            font-size: 1.2em;
-            margin: 10px 0;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>傻逼</title>
+  <style>
+    body {
+      background-color: pink;
+      text-align: center;
+      padding: 50px;
+      font-family: sans-serif;
+    }
+    img {
+      width: 200px;
+      margin-bottom: 20px;
+    }
+    h2 {
+      margin-bottom: 30px;
+    }
+    button {
+      padding: 12px 30px;
+      font-size: 16px;
+      border: none;
+      border-radius: 4px;
+      color: white;
+      cursor: pointer;
+      margin: 0 10px;
+      transition: transform 0.2s ease;
+      transform: scale(1);
+    }
+    #yes { background: #e74c3c; }
+    #no  { background: #3498db; }
+  </style>
 </head>
 <body>
-    <div class="game-container">
-        <h1>21点游戏</h1>
-        
-        <div class="dealer-area">
-            <h2>庄家牌 (<span id="dealer-score">?</span>)</h2>
-            <div id="dealer-cards" class="cards"></div>
-        </div>
 
-        <div class="player-area">
-            <h2>你的牌 (<span id="player-score">0</span>)</h2>
-            <div id="player-cards" class="cards"></div>
-        </div>
+  <h2>你是傻逼吗?</h2>
 
-        <div class="score">
-            <span id="message">欢迎来到21点游戏！</span>
-        </div>
+  <button id="yes" onclick="onClickYes()">是</button>
+  <button id="no"  onclick="onClickNo()">不是</button>
 
-        <div class="controls">
-            <button id="hit-button" onclick="playerHit()">要牌</button>
-            <button id="stand-button" onclick="playerStand()">停牌</button>
-            <button id="new-game-button" onclick="newGame()">新游戏</button>
-        </div>
-    </div>
+  <script>
+    // 初始缩放倍数
+    let scaleYes = 1;
+    let scaleNo  = 1;
 
-    <script>
-        let deck = [];
-        let playerHand = [];
-        let dealerHand = [];
-        let gameOver = false;
+    function onClickNo() {
+      // 每次点击“不要”时，累计改变缩放比例
+      scaleYes += 0.1;
+      scaleNo  -= 0.1;
+      yes.style.transform = `scale(${scaleYes})`;
+      no.style.transform  = `scale(${scaleNo})`;
+    }
 
-        function createDeck() {
-            const suits = ['♥', '♦', '♠', '♣'];
-            const values = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
-            
-            for(let suit of suits) {
-                for(let value of values) {
-                    deck.push({suit, value});
-                }
-            }
-            // 洗牌
-            deck = deck.sort(() => Math.random() - 0.5);
-        }
+    function onClickYes() {
+      // 跳转到承认页
+      window.location.href = 'ack.html';
+    }
 
-        function calculateScore(hand) {
-            let score = 0;
-            let aces = 0;
+    // 简化取元素
+    const yes = document.getElementById('yes');
+    const no  = document.getElementById('no');
+  </script>
 
-            for(let card of hand) {
-                if(card.value === 'A') {
-                    aces += 1;
-                } else if(['J','Q','K'].includes(card.value)) {
-                    score += 10;
-                } else {
-                    score += parseInt(card.value);
-                }
-            }
-
-            // 处理A牌
-            score += aces * 11;
-            while(score > 21 && aces > 0) {
-                score -= 10;
-                aces--;
-            }
-            return score;
-        }
-
-        function createCardElement(card, reveal = true) {
-            const div = document.createElement('div');
-            div.className = `card ${['♥','♦'].includes(card.suit) ? 'red' : 'black'}`;
-            div.dataset.suit = card.suit;
-            div.textContent = reveal ? card.value : '';
-            if(!reveal) div.dataset.suit = '?';
-            return div;
-        }
-
-        function updateDisplay() {
-            // 更新玩家牌
-            const playerCards = document.getElementById('player-cards');
-            playerCards.innerHTML = '';
-            playerHand.forEach(card => {
-                playerCards.appendChild(createCardElement(card));
-            });
-            document.getElementById('player-score').textContent = calculateScore(playerHand);
-
-            // 更新庄家牌
-            const dealerCards = document.getElementById('dealer-cards');
-            dealerCards.innerHTML = '';
-            dealerHand.forEach((card, index) => {
-                dealerCards.appendChild(createCardElement(card, index !== 0 || gameOver));
-            });
-            document.getElementById('dealer-score').textContent = gameOver ? 
-                calculateScore(dealerHand) : '?';
-        }
-
-        function checkGameOver() {
-            const playerScore = calculateScore(playerHand);
-            const dealerScore = calculateScore(dealerHand);
-
-            if(playerScore > 21) {
-                endGame('你爆牌了！庄家赢');
-                return true;
-            }
-            return false;
-        }
-
-        function endGame(message) {
-            gameOver = true;
-            document.getElementById('hit-button').disabled = true;
-            document.getElementById('stand-button').disabled = true;
-            
-            // 庄家要牌
-            while(calculateScore(dealerHand) < 17) {
-                dealerHand.push(deck.pop());
-            }
-
-            const playerScore = calculateScore(playerHand);
-            const dealerScore = calculateScore(dealerHand);
-
-            if(!message) {
-                if(dealerScore > 21) {
-                    message = '庄家爆牌！你赢了！';
-                } else if(playerScore > dealerScore) {
-                    message = '你赢了！';
-                } else if(playerScore < dealerScore) {
-                    message = '庄家赢了！';
-                } else {
-                    message = '平局！';
-                }
-            }
-
-            document.getElementById('message').textContent = message;
-            updateDisplay();
-        }
-
-        function playerHit() {
-            if(gameOver) return;
-            
-            playerHand.push(deck.pop());
-            if(!checkGameOver()) {
-                updateDisplay();
-            }
-        }
-
-        function playerStand() {
-            endGame();
-        }
-
-        function newGame() {
-            deck = [];
-            playerHand = [];
-            dealerHand = [];
-            gameOver = false;
-            
-            createDeck();
-            
-            // 初始发牌
-            playerHand.push(deck.pop());
-            dealerHand.push(deck.pop());
-            playerHand.push(deck.pop());
-            dealerHand.push(deck.pop());
-
-            document.getElementById('hit-button').disabled = false;
-            document.getElementById('stand-button').disabled = false;
-            document.getElementById('message').textContent = '游戏开始！';
-            updateDisplay();
-        }
-
-        // 初始化游戏
-        newGame();
-    </script>
 </body>
 </html>
