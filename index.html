@@ -1,30 +1,53 @@
+<!-- index.html -->
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <title>傻逼</title>
+  <!-- 响应式视口设置 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>累计缩放示例</title>
   <style>
+    /* 全局基础 */
+    * { box-sizing: border-box; }
     body {
       background-color: pink;
       text-align: center;
-      padding: 50px;
+      padding: 5%;
+      margin: 0;
       font-family: sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: start;
+      min-height: 100vh;
     }
     img {
-      width: 200px;
-      margin-bottom: 20px;
+      width: 80%;       /* 响应式宽度 */
+      max-width: 250px; /* 限制最大宽度 */
+      height: auto;
+      margin-bottom: 2rem;
     }
     h2 {
-      margin-bottom: 30px;
+      font-size: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .buttons {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      width: 100%;
+      max-width: 400px;
     }
     button {
-      padding: 12px 30px;
-      font-size: 16px;
+      flex: 1 1 40%;       /* 最少占 40% 宽度，可扩展 */
+      min-width: 100px;    /* 保证按钮最小宽度 */
+      padding: 1rem;
+      font-size: 1rem;
       border: none;
-      border-radius: 4px;
+      border-radius: 0.5rem;
       color: white;
       cursor: pointer;
-      margin: 0 10px;
       transition: transform 0.2s ease;
       transform: scale(1);
     }
@@ -34,33 +57,67 @@
 </head>
 <body>
 
-  <h2>你是傻逼吗?</h2>
+  <img src="https://cdn.pixabay.com/vectors/panda-bear-animal-cute-cartoon-9529837.png" alt="可爱熊猫">
+  <h2>可以跟我和好吗？</h2>
 
-  <button id="yes" onclick="onClickYes()">是</button>
-  <button id="no"  onclick="onClickNo()">不是</button>
+  <div class="buttons">
+    <button id="yes" onclick="onClickYes()">和好</button>
+    <button id="no"  onclick="onClickNo()">不要</button>
+  </div>
 
   <script>
-    // 初始缩放倍数
+    // 全局缩放变量
     let scaleYes = 1;
     let scaleNo  = 1;
 
+    const yesBtn = document.getElementById('yes');
+    const noBtn  = document.getElementById('no');
+
     function onClickNo() {
-      // 每次点击“不要”时，累计改变缩放比例
+      // 累计缩放
       scaleYes += 0.1;
       scaleNo  -= 0.1;
-      yes.style.transform = `scale(${scaleYes})`;
-      no.style.transform  = `scale(${scaleNo})`;
+      yesBtn.style.transform = `scale(${scaleYes})`;
+      noBtn .style.transform = `scale(${scaleNo})`;
     }
 
     function onClickYes() {
       // 跳转到承认页
       window.location.href = 'ack.html';
     }
-
-    // 简化取元素
-    const yes = document.getElementById('yes');
-    const no  = document.getElementById('no');
   </script>
+</body>
+</html>
 
+
+<!-- ack.html -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>你终于承认了</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      background-color: #fff0f5;
+      margin: 0;
+      font-family: sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      text-align: center;
+      padding: 1rem;
+    }
+    h1 {
+      font-size: 2rem;
+      color: #e74c3c;
+      line-height: 1.2;
+    }
+  </style>
+</head>
+<body>
+  <h1>你终于承认了</h1>
 </body>
 </html>
